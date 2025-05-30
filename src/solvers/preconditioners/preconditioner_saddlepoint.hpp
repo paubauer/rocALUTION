@@ -74,6 +74,10 @@ namespace rocalution
         void Set(Solver<OperatorType, VectorType, ValueType>& K_Solver,
                  Solver<OperatorType, VectorType, ValueType>& S_Solver);
 
+        /* \brief Set external schur complement if needed */
+        ROCALUTION_EXPORT
+        void SetSchurComplement(OperatorType& SchurComplement);
+
         ROCALUTION_EXPORT
         virtual void Build(void);
 
@@ -123,6 +127,8 @@ namespace rocalution
         LocalVector<int> permutation_;
         /** \brief Size */
         int size_;
+        /* \If we have an external schur complement or not */
+        bool haveExternalSchurComplement_;
 
         virtual void MoveToHostLocalData_(void);
         virtual void MoveToAcceleratorLocalData_(void);

@@ -52,6 +52,8 @@ namespace rocalution
 
         this->K_nrow_ = 0;
         this->K_nnz_  = 0;
+
+        this->haveExternalSchurComplement_ = false;
     }
 
     template <class OperatorType, class VectorType, typename ValueType>
@@ -108,6 +110,8 @@ namespace rocalution
             this->S_solver_ = NULL;
 
             this->build_ = false;
+
+            this->haveExternalSchurComplement_ = false;
         }
     }
 
@@ -145,6 +149,20 @@ namespace rocalution
         this->K_solver_ = &K_Solver;
         this->S_solver_ = &S_Solver;
     }
+
+    template <class OperatorType, class VectorType, typename ValueType>
+    void DiagJacobiSaddlePointPrecond<OperatorType, VectorType, ValueType>::SetSchurComplement(OperatorType& SchurComplement)
+    {
+        log_debug(this,
+                  "DiagJacobiSaddlePointPrecond::SetSchurComplement()",
+                  (const void*&)SchurComplement);
+
+        assert(this->build_ == false);
+    
+        this->haveExternalSchurComplement_ = true;
+        this->S_ = SchurComplement;
+    }
+    
 
     template <class OperatorType, class VectorType, typename ValueType>
     void DiagJacobiSaddlePointPrecond<OperatorType, VectorType, ValueType>::Build(void)
@@ -208,8 +226,11 @@ namespace rocalution
         // E = E * inv(diag(K))
         E.DiagonalMatrixMult(inv_K);
 
-        // S = E * F
-        this->S_.MatrixMult(E, F);
+        // S = E * F, or user supplied
+        if (!this->haveExternalSchurComplement_)
+        {
+            this->S_.MatrixMult(E, F);
+        }
 
         this->S_solver_->SetOperator(this->S_);
         this->S_solver_->Build();
