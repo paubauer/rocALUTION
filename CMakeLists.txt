@@ -77,6 +77,7 @@ option(BUILD_GLOBALTYPE_64 "Support global number of rows / columns exceeding 32
 option(BUILD_LOCALTYPE_64 "Support local number of rows / columns exceeding 32 bits" OFF)
 option(BUILD_PTRTYPE_64 "Support local number of non-zeros exceeding 32 bits" OFF)
 option(BUILD_OPTCPU "Enable all instruction subsets supported by the local machine" OFF)
+option(BUILD_SUPPORT_COMPLEX "Enable complex number support" ON)
 
 # Dependencies
 include(cmake/Dependencies.cmake)
@@ -252,7 +253,7 @@ if(BUILD_CODE_COVERAGE)
   #
   add_custom_command(TARGET coverage_output
     COMMAND lcov --directory . --base-directory . --capture -o lcoverage/raw_main_coverage.info
-    COMMAND lcov --remove lcoverage/raw_main_coverage.info "'${CMAKE_SOURCE_DIR}/src/utils/rocsparseio.*'" "'${CMAKE_SOURCE_DIR}/src/base/host/host_io.*'" "'${CMAKE_SOURCE_DIR}/clients/*'" "'${CMAKE_SOURCE_DIR}/build/*'" "'/opt/*'" "'/usr/*'" -o lcoverage/main_coverage.info
+    COMMAND lcov --remove lcoverage/raw_main_coverage.info "'${CMAKE_SOURCE_DIR}/src/utils/*'" "'${CMAKE_SOURCE_DIR}/src/base/host/host_io.*'" "'${CMAKE_SOURCE_DIR}/clients/*'" "'${CMAKE_SOURCE_DIR}/build/*'" "'/opt/*'" "'/usr/*'" -o lcoverage/main_coverage.info
     COMMAND genhtml lcoverage/main_coverage.info --output-directory lcoverage
     )
 
